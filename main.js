@@ -13,3 +13,5 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
     field.style.cursor = `url('./img/${e.target.id}.png'), auto`;
   }
 });
+
+// hier kommt später Code von Hannah hin
