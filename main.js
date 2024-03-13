@@ -15,3 +15,13 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
 });
 
 // hier kommt später Code von Hannah hin
+
+field.addEventListener("mousedown", () => {
+  field.style.backgroundColor = "red";
+});
+
+field.addEventListener("mouseup", () => {
+  field.style.backgroundColor = "white";
+});
+
+alert("baris hier");
