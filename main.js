@@ -16,6 +16,7 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
 
 // hier kommt später Code von Hannah hin
 //noch eine Zeile
+// hier ein neuer Kommentar von Hannah
 
 field.addEventListener("mousedown", () => {
   field.style.backgroundColor = "red";
