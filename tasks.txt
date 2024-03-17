@@ -1,0 +1,38 @@
+------------------------------------------------- TASKS -------------------------------------------------------
+###### GENERAL ######
+- die Auswahl des Tools mit switch o.Ä regulieren
+- Problem: beim Verkleinern des Browser-Fensters wird die Zeichnenposition versetzt
+- Problem: the size of menubar and sidebar changes by resizing the window 
+- Problem: wenn man bei kleinerem Fenster etwas malt und dann das Fenster vergrößert, wird das gemalte gestrecht
+- Problem: bei Verkleinern des Fensters ensteht kein overflow
+
+###### pen tool ######
+- Calibration: die Position der Spitze des Stifts stimmt nicht überein mit der von der Pfeile
+- UI für die dicke des Stifts: small pop-up and auto hide after selecting
+- Stiftdicke nach der Auswahl in Canvas anpassen
+
+
+###### color tool ######
+- Farbpalette in HTML addieren
+- change drawing color by selecting any color
+
+
+###### brush function ######
+- Change: Marker icon ersetzen mit brush icon
+
+
+###### erase tool ######
+(will be avaible soon)
+
+
+###### select tool ######
+(will be avaible soon)
+
+
+###### adding tool ######
+(will be avaible soon)
+
+
+###### zoom-in / zoom-out (with overflow) ######
+(will be avaible soon)
+

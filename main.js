@@ -14,16 +14,27 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
   }
 });
 
-// hier kommt später Code von Hannah hin
-//noch eine Zeile
-// hier ein neuer Kommentar von Hannah
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 
-field.addEventListener("mousedown", () => {
-  field.style.backgroundColor = "red";
+canvas.width = window.innerWidth - 50;
+canvas.height = window.innerHeight - 50;
+
+let isDrawing = false;
+
+field.addEventListener("mousedown", (e) => {
+  isDrawing = true;
+  ctx.beginPath();
+  ctx.moveTo(e.clientX - 50, e.clientY - 50);
 });
 
-field.addEventListener("mouseup", () => {
-  field.style.backgroundColor = "white";
+field.addEventListener("mousemove", (e) => {
+  if (isDrawing) {
+    ctx.lineTo(e.clientX - 50, e.clientY - 50);
+    ctx.stroke();
+  }
 });
 
-alert("baris hier");
+field.addEventListener("mouseup", (e) => {
+  isDrawing = false;
+});
