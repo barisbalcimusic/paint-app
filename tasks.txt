@@ -2,7 +2,6 @@
 ###### GENERAL ######
 - die Auswahl des Tools mit switch o.Ä regulieren
 - Problem: beim Verkleinern des Browser-Fensters wird die Zeichnenposition versetzt
-- Problem: the size of menubar and sidebar changes by resizing the window 
 - Problem: wenn man bei kleinerem Fenster etwas malt und dann das Fenster vergrößert, wird das gemalte gestrecht
 - Problem: bei Verkleinern des Fensters ensteht kein overflow
 
