@@ -1,9 +1,9 @@
-//selecting tools
 const main = document.querySelector(".main");
 const sidebar = document.querySelector(".sidebar");
 const tools = document.querySelectorAll(".tool");
 const field = document.getElementById("field");
 
+//select any tool
 sidebar.firstElementChild.addEventListener("click", (e) => {
   if (e.target !== e.currentTarget) {
     tools.forEach((el) => {
@@ -14,14 +14,16 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
   }
 });
 
+//create canvas
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-
 canvas.width = window.innerWidth - 50;
 canvas.height = window.innerHeight - 50;
 
+//some initial status
 let isDrawing = false;
 
+//drawing
 field.addEventListener("mousedown", (e) => {
   isDrawing = true;
   ctx.beginPath();
@@ -37,4 +39,11 @@ field.addEventListener("mousemove", (e) => {
 
 field.addEventListener("mouseup", (e) => {
   isDrawing = false;
+  ctx.strokeStyle = null;
+});
+
+//color change
+const colorPalette = main.querySelector(".color-palette");
+colorPalette.addEventListener("change", (e) => {
+  ctx.strokeStyle = e.target.value;
 });

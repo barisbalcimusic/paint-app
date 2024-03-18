@@ -13,8 +13,7 @@
 
 
 ###### color tool ######
-- Farbpalette in HTML addieren
-- change drawing color by selecting any color
+(will be avaible soon)
 
 
 ###### brush function ######
