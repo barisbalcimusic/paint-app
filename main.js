@@ -17,8 +17,8 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
 //create canvas
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth - 50;
-canvas.height = window.innerHeight - 50;
+canvas.width = screen.width;
+canvas.height = screen.height;
 
 //some initial status
 let isDrawing = false;
@@ -27,12 +27,12 @@ let isDrawing = false;
 field.addEventListener("mousedown", (e) => {
   isDrawing = true;
   ctx.beginPath();
-  ctx.moveTo(e.clientX - 50, e.clientY - 50);
+  ctx.moveTo(e.clientX, e.clientY);
 });
 
 field.addEventListener("mousemove", (e) => {
   if (isDrawing) {
-    ctx.lineTo(e.clientX - 50, e.clientY - 50);
+    ctx.lineTo(e.clientX, e.clientY);
     ctx.stroke();
   }
 });
