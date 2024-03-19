@@ -11,6 +11,15 @@ canvas.height = window.innerHeight - 50;
 
 //some initial status
 let isDrawing = false;
+let currentColor = "black";
+
+//color change
+const colorPalette = main.querySelector(".color-palette");
+colorPalette.addEventListener("change", (e) => {
+  currentColor = e.target.value;
+  document.getElementById("pen").click();
+  draw();
+});
 
 //select any tool
 sidebar.firstElementChild.addEventListener("click", (e) => {
@@ -26,6 +35,7 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
         draw();
         break;
       case "eraser":
+        erase();
         break;
       case "select":
         break;
@@ -51,6 +61,8 @@ function draw() {
     isDrawing = true;
     ctx.beginPath();
     ctx.moveTo(e.clientX - 50, e.clientY - 50);
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = 1;
   });
 
   field.addEventListener("mousemove", (e) => {
@@ -66,8 +78,25 @@ function draw() {
   });
 }
 
-//color change
-const colorPalette = main.querySelector(".color-palette");
-colorPalette.addEventListener("change", (e) => {
-  ctx.strokeStyle = e.target.value;
-});
+//erase
+function erase() {
+  field.addEventListener("mousedown", (e) => {
+    isDrawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - 50, e.clientY - 50);
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 30;
+  });
+
+  field.addEventListener("mousemove", (e) => {
+    if (isDrawing) {
+      ctx.lineTo(e.clientX - 50, e.clientY - 50);
+      ctx.stroke();
+    }
+  });
+
+  field.addEventListener("mouseup", (e) => {
+    isDrawing = false;
+    ctx.strokeStyle = null;
+  });
+}
