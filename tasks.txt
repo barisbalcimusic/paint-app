@@ -1,9 +1,11 @@
 ------------------------------------------------- TASKS -------------------------------------------------------
 ###### GENERAL ######
-- die Auswahl des Tools mit switch o.Ä regulieren
+- die Auswahl des Tools mit switch o.Ä regulieren --> done
 - Problem: beim Verkleinern des Browser-Fensters wird die Zeichnenposition versetzt
 - Problem: wenn man bei kleinerem Fenster etwas malt und dann das Fenster vergrößert, wird das gemalte gestrecht
 - Problem: bei Verkleinern des Fensters ensteht kein overflow
+- Problem: es wird bei jedem tool-selecting ein neuer eventHandler hinzugefügt - das sollten wir noch verbessern
+
 
 ###### pen tool ######
 - Calibration: die Position der Spitze des Stifts stimmt nicht überein mit der von der Pfeile
@@ -12,7 +14,7 @@
 
 
 ###### color tool ######
-(will be avaible soon)
+/ (no problems so far)
 
 
 ###### brush function ######
@@ -20,7 +22,7 @@
 
 
 ###### erase tool ######
-(will be avaible soon)
+/ (no problems so far)
 
 
 ###### select tool ######
