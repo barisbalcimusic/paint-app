@@ -84,12 +84,30 @@ body {
               opacity: 0;
               cursor: pointer;
             }
+            input[name="shape"] {
+              position: absolute;
+              display: none;
+            }
           }
           .tool:hover {
             color: rgb(255, 255, 255);
           }
           .tool:active {
             color: $primary;
+          }
+          #shapes {
+            position: relative;
+            label {
+              position: absolute;
+              left: 60px;
+              display: none;
+              color: black;
+              padding: 3px;
+              cursor: pointer;
+            }
+            #circLabel {
+              left: 100px;
+            }
           }
         }
       }
