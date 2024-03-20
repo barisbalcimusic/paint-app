@@ -12,6 +12,7 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: "Montserrat", sans-serif;
+  overflow: hidden;
 }
 body .container {
   width: 100%;
@@ -95,9 +96,19 @@ body .container .main .sidebar .tools .tool:hover {
 body .container .main .sidebar .tools .tool:active {
   color: rgb(59, 110, 23);
 }
+body .container .main .text-field {
+  border: none;
+  overflow: hidden;
+  background-color: transparent;
+}
+body .container .main .text-field:focus {
+  outline: none;
+  border: dashed 1px black;
+}
 body .container .main .field {
   position: absolute;
-  background-color: red;
+  top: 0;
+  left: 0;
 }
 
 /*# sourceMappingURL=style.css.map */
