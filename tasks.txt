@@ -25,7 +25,8 @@
 
 
 ###### select tool ######
-(will be avaible soon)
+- Problem: Linienfarbe auf dem ctx ist zu hell (z.B. grau statt schwarz, wird wohl von irgendetwas überlagert)
+- Problem: Wenn man nichts zeichnet und dann doch ein anderes Tool auswählt, ist der eventListener noch aktiv und zeichnet die Form trotzdem --> siehe GENERAL
 
 
 ###### adding tool ######
