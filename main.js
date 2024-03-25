@@ -43,20 +43,19 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
         unselectShape();
         field.removeEventListener("click", createTextField);
         field.addEventListener("mousedown", drawingStart);
-        field.addEventListener("mousemove", drawingProcess);
         break;
       case "eraser":
         field.style.cursor = `url("./img/eraser.png"), auto`;
         unselectShape();
         field.removeEventListener("click", createTextField);
         field.addEventListener("mousedown", drawingStart);
-        field.addEventListener("mousemove", drawingProcess);
         break;
       case "select":
-        unselectShape();
         break;
       case "shapes":
         field.style.cursor = "auto";
+        field.removeEventListener("click", createTextField);
+        field.removeEventListener("mousedown", drawingStart);
         if (!shapesToggle) {
           shapesToggle = true;
           selectShape();
@@ -68,22 +67,17 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
         field.style.cursor = "text";
         unselectShape();
         field.removeEventListener("mousedown", drawingStart);
-        field.removeEventListener("mousemove", drawingProcess);
         field.addEventListener("click", createTextField);
         break;
       case "zoom-in":
         field.style.cursor = "zoom-in";
-        unselectShape();
         break;
       case "zoom-out":
         field.style.cursor = "zoom-out";
-        unselectShape();
         break;
       case "highlighter":
-        unselectShape();
         break;
       default:
-        unselectShape();
         break;
     }
   }
@@ -92,6 +86,8 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
 //start drawing with pen/eraser
 function drawingStart(e) {
   isDrawing = true;
+  field.addEventListener("mousemove", drawingProcess);
+  field.addEventListener("mouseup", drawingStop);
   ctx.beginPath();
   ctx.moveTo(e.clientX, e.clientY);
   switch (selectedTool) {
@@ -115,13 +111,13 @@ function drawingProcess(e) {
   if (isDrawing) {
     ctx.lineTo(e.clientX, e.clientY);
     ctx.stroke();
-    field.addEventListener("mouseup", drawingStop);
   }
 }
 
 //stop drawing with pen/eraser
 function drawingStop() {
   isDrawing = false;
+  field.removeEventListener("mousemove", drawingProcess);
 }
 
 //----------- ADDING TEXT -----------
@@ -158,6 +154,7 @@ function convertToCanvasText(fSize, tColor, fFamily, x, y, textField) {
   });
 }
 
+//----------- SHAPE SELECTION -----------
 //unselecting shapes
 function unselectShape() {
   shapesToggle = false;
@@ -185,9 +182,10 @@ function drawShape(chosenShape) {
   let startX, startY;
   let width, height;
   let shape;
-  field.addEventListener("mousedown", mouseDownHandler);
+  field.addEventListener("mousedown", startShape);
 
-  function mouseDownHandler(e) {
+  //start drawing a shape
+  function startShape(e) {
     startX = e.clientX;
     startY = e.clientY;
     shape = document.createElement("div");
@@ -200,21 +198,23 @@ function drawShape(chosenShape) {
       shape.style.borderRadius = "50%";
     }
 
-    field.addEventListener("mousemove", mouseMoveHandler);
+    field.addEventListener("mousemove", moveShape);
+    field.addEventListener("mouseup", endShape);
   }
 
-  function mouseMoveHandler(e) {
+  //perform drawing with shape
+  function moveShape(e) {
     width = e.clientX - startX;
     height = e.clientY - startY;
     shape.style.width = width + "px";
     shape.style.height = height + "px";
-    field.addEventListener("mouseup", mouseUpHandler);
   }
 
-  function mouseUpHandler() {
-    field.removeEventListener("mousedown", mouseDownHandler);
-    field.removeEventListener("mousemove", mouseMoveHandler);
-    field.removeEventListener("mouseup", mouseUpHandler);
+  //stop drawing a shape
+  function endShape() {
+    field.removeEventListener("mousedown", startShape);
+    field.removeEventListener("mousemove", moveShape);
+    field.removeEventListener("mouseup", endShape);
     field.style.cursor = "default";
     shape.remove();
     let centerX = startX + width / 2;

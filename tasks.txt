@@ -3,7 +3,6 @@
 - Problem: beim Verkleinern des Browser-Fensters wird die Zeichnenposition versetzt
 - Problem: wenn man bei kleinerem Fenster etwas malt und dann das Fenster vergrößert, wird das gemalte gestrecht
 - Problem: bei Verkleinern des Fensters ensteht kein overflow
-- Problem: es wird bei jedem tool-selecting ein neuer eventHandler hinzugefügt - das sollten wir noch verbessern
 
 
 ###### pen tool ######
@@ -13,7 +12,7 @@
 
 
 ###### color tool ######
-/ (no problems so far)
+- Problem: wenn man die Farbe ändert und danach kein Tool auswählt, wird die Farbe nicht upgedated (erst wenn man ein neues Tool auswählt)
 
 
 ###### brush function ######
