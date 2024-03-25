@@ -1,3 +1,4 @@
+//some selectings
 const main = document.querySelector(".main");
 const sidebar = document.querySelector(".sidebar");
 const tools = document.querySelectorAll(".tool");
@@ -16,19 +17,18 @@ window.addEventListener("resize", () => {
 });
 
 //some initial status
+let selectedTool;
 let isDrawing = false;
 let currentColor = "black";
 let shapesToggle = false;
 
-//color change
+//----------- COLOR CHANGE -----------
 const colorPalette = main.querySelector(".color-palette");
 colorPalette.addEventListener("change", (e) => {
   currentColor = e.target.value;
-  document.getElementById("pen").click();
-  draw();
 });
 
-//select any tool
+//----------- TOOL SELECTING -----------
 sidebar.firstElementChild.addEventListener("click", (e) => {
   if (e.target !== e.currentTarget) {
     tools.forEach((el) => {
@@ -36,16 +36,21 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
     });
     e.target.style.color = "lightblue";
 
-    switch (e.target.id) {
+    selectedTool = e.target.id;
+    switch (selectedTool) {
       case "pen":
         field.style.cursor = "crosshair";
         unselectShape();
-        draw();
+        field.removeEventListener("click", createTextField);
+        field.addEventListener("mousedown", drawingStart);
+        field.addEventListener("mousemove", drawingProcess);
         break;
       case "eraser":
         field.style.cursor = `url("./img/eraser.png"), auto`;
         unselectShape();
-        erase();
+        field.removeEventListener("click", createTextField);
+        field.addEventListener("mousedown", drawingStart);
+        field.addEventListener("mousemove", drawingProcess);
         break;
       case "select":
         unselectShape();
@@ -62,7 +67,9 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
       case "text":
         field.style.cursor = "text";
         unselectShape();
-        addText();
+        field.removeEventListener("mousedown", drawingStart);
+        field.removeEventListener("mousemove", drawingProcess);
+        field.addEventListener("click", createTextField);
         break;
       case "zoom-in":
         field.style.cursor = "zoom-in";
@@ -82,57 +89,43 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
   }
 });
 
-//drawing
-function draw() {
-  field.addEventListener("mousedown", (e) => {
-    isDrawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.clientX, e.clientY);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = 1;
-  });
-
-  field.addEventListener("mousemove", (e) => {
-    if (isDrawing) {
-      ctx.lineTo(e.clientX, e.clientY);
-      ctx.stroke();
-    }
-  });
-
-  field.addEventListener("mouseup", (e) => {
-    isDrawing = false;
-    ctx.strokeStyle = null;
-  });
+//start drawing with pen/eraser
+function drawingStart(e) {
+  isDrawing = true;
+  ctx.beginPath();
+  ctx.moveTo(e.clientX, e.clientY);
+  switch (selectedTool) {
+    case "pen":
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = 1;
+      break;
+    case "eraser":
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 30;
+      break;
+    case "text":
+      break;
+    default:
+      break;
+  }
 }
 
-//erase
-function erase() {
-  field.addEventListener("mousedown", (e) => {
-    isDrawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.clientX, e.clientY);
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 30;
-  });
-
-  field.addEventListener("mousemove", (e) => {
-    if (isDrawing) {
-      ctx.lineTo(e.clientX, e.clientY);
-      ctx.stroke();
-    }
-  });
-
-  field.addEventListener("mouseup", (e) => {
-    isDrawing = false;
-    ctx.strokeStyle = null;
-  });
+//perform drawing with pen/eraser
+function drawingProcess(e) {
+  if (isDrawing) {
+    ctx.lineTo(e.clientX, e.clientY);
+    ctx.stroke();
+    field.addEventListener("mouseup", drawingStop);
+  }
 }
 
-//adding text
-function addText() {
-  field.addEventListener("click", createTextField);
+//stop drawing with pen/eraser
+function drawingStop() {
+  isDrawing = false;
 }
 
+//----------- ADDING TEXT -----------
+//create textarea as preview
 function createTextField(e) {
   const x = e.clientX;
   const y = e.clientY;
@@ -155,9 +148,10 @@ function createTextField(e) {
   convertToCanvasText(fSize, tColor, fFamily, x, y, textField);
 }
 
+//convert textarea to canvas-text
 function convertToCanvasText(fSize, tColor, fFamily, x, y, textField) {
-  ctx.font = `${fSize}px ${fFamily}`;
   textField.addEventListener("blur", () => {
+    ctx.font = `${fSize}px ${fFamily}`;
     ctx.fillStyle = tColor;
     ctx.fillText(textField.value, x + 5, y + 20);
     textField.remove();
