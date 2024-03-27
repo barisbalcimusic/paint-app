@@ -41,12 +41,14 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
       case "pen":
         field.style.cursor = "crosshair";
         unselectShape();
+        unselectZoom();
         field.removeEventListener("click", createTextField);
         field.addEventListener("mousedown", drawingStart);
         break;
       case "eraser":
         field.style.cursor = `url("./img/eraser.png"), auto`;
         unselectShape();
+        unselectZoom();
         field.removeEventListener("click", createTextField);
         field.addEventListener("mousedown", drawingStart);
         break;
@@ -54,6 +56,7 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
         break;
       case "shapes":
         field.style.cursor = "auto";
+        unselectZoom();
         field.removeEventListener("click", createTextField);
         field.removeEventListener("mousedown", drawingStart);
         if (!shapesToggle) {
@@ -66,14 +69,25 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
       case "text":
         field.style.cursor = "text";
         unselectShape();
+        unselectZoom();
         field.removeEventListener("mousedown", drawingStart);
         field.addEventListener("click", createTextField);
         break;
       case "zoom-in":
         field.style.cursor = "zoom-in";
+        unselectShape();
+        unselectZoom();
+        field.removeEventListener("mousedown", drawingStart);
+        field.removeEventListener("click", createTextField);
+        field.addEventListener("click", zoomIn);
         break;
       case "zoom-out":
         field.style.cursor = "zoom-out";
+        unselectShape();
+        unselectZoom();
+        field.removeEventListener("mousedown", drawingStart);
+        field.removeEventListener("click", createTextField);
+        field.addEventListener("click", zoomOut);
         break;
       case "highlighter":
         break;
@@ -236,3 +250,41 @@ function drawShape(chosenShape) {
     ctx.stroke();
   }
 }
+
+//----------- ZOOM -----------
+
+//Unselect Zoom
+const unselectZoom = () => {
+  field.removeEventListener("click", zoomIn);
+  field.removeEventListener("click", zoomOut);
+};
+
+//Declare functions for Zooming in/out
+const zoomIn = (e) => {
+  zoom(e, 1.1);
+};
+const zoomOut = (e) => {
+  zoom(e, 0.9);
+};
+
+//Zooming in/out
+const zoom = (e, zoomFactor) => {
+  const x = e.offsetX;
+  const y = e.offsetY;
+  //Draw current canvas to a second canvas "resizedCanvas"
+  const resizedCanvas = document.createElement("canvas");
+  const resizedCtx = resizedCanvas.getContext("2d");
+  const newWidth = canvas.width * zoomFactor;
+  const newHeight = canvas.height * zoomFactor;
+  resizedCanvas.width = newWidth;
+  resizedCanvas.height = newHeight;
+  resizedCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
+  //Clear current canvas, save settings, move according to mouseclick-location
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(-x * (zoomFactor - 1), -y * (zoomFactor - 1));
+  ctx.scale(zoomFactor, zoomFactor);
+  //Draw "resizedCanvas" onto current canvas, restore settings
+  ctx.drawImage(resizedCanvas, 0, 0);
+  ctx.restore();
+};

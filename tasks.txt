@@ -33,5 +33,7 @@
 
 
 ###### zoom-in / zoom-out (with overflow) ######
-(will be avaible soon)
+- Problem: Gezoomte Zeichnungen werden schnell sehr verpixelt
+- Problem: Bei Zoom-in -> Zoom-out kann nichts Altes zurückgeholt werden, sondern Overflow wird abgeschnitten
+- Problem: Zoom-in in untere rechte Ecke nicht präzise (die Formel bei ctx.translate müsste wohl verbessert werden)
 
