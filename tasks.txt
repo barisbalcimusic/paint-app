@@ -4,33 +4,21 @@
 - Problem: wenn man bei kleinerem Fenster etwas malt und dann das Fenster vergrößert, wird das gemalte gestrecht
 - Problem: bei Verkleinern des Fensters ensteht kein overflow
 
-
 ###### pen tool ######
 - Calibration: die Position der Spitze des Stifts stimmt nicht überein mit der von der Pfeile
 - UI für die dicke des Stifts: small pop-up and auto hide after selecting
 - Stiftdicke nach der Auswahl in Canvas anpassen
 
-
 ###### color tool ######
 - Problem: wenn man die Farbe ändert und danach kein Tool auswählt, wird die Farbe nicht upgedated (erst wenn man ein neues Tool auswählt)
+- Problem: wenn zuerst den Stift auswählt und dann die Farbe ändert, wird die Farbe nicht geändert. 
 
-
-###### brush function ######
-- Change: Marker icon ersetzen mit brush icon
-
-
-###### erase tool ######
-/ (no problems so far)
-
+###### text tool ######
+- funktioniert nicht mehr ???
 
 ###### select tool ######
 - Problem: Linienfarbe auf dem ctx ist zu hell (z.B. grau statt schwarz, wird wohl von irgendetwas überlagert)
 - Problem: Wenn man nichts zeichnet und dann doch ein anderes Tool auswählt, ist der eventListener noch aktiv und zeichnet die Form trotzdem --> siehe GENERAL
-
-
-###### adding tool ######
-(will be avaible soon)
-
 
 ###### zoom-in / zoom-out (with overflow) ######
 - Problem: Gezoomte Zeichnungen werden schnell sehr verpixelt
