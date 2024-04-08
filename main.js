@@ -9,6 +9,8 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
 //resize
 window.addEventListener("resize", () => {
@@ -28,6 +30,7 @@ colorPalette.addEventListener("change", (e) => {
   currentColor = e.target.value;
 });
 
+//BUG: wenn man zuerst den Stift auswählt, lässt dich die Farbe nicht mehr ändern
 //----------- TOOL SELECTING -----------
 sidebar.firstElementChild.addEventListener("click", (e) => {
   if (e.target !== e.currentTarget) {
@@ -252,7 +255,6 @@ function drawShape(chosenShape) {
 }
 
 //----------- ZOOM -----------
-
 //Unselect Zoom
 const unselectZoom = () => {
   field.removeEventListener("click", zoomIn);
@@ -288,3 +290,27 @@ const zoom = (e, zoomFactor) => {
   ctx.drawImage(resizedCanvas, 0, 0);
   ctx.restore();
 };
+
+//----------- MENUBAR -----------
+//save
+const saveBtn = document.getElementById("save");
+saveBtn.addEventListener("click", () => {
+  const dataURL = canvas.toDataURL("image/jpeg");
+  let a = document.createElement("a");
+  a.href = dataURL;
+  a.download = "image.jpg";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+
+//about
+const about = document.getElementById("about");
+about.addEventListener("click", () => {
+  const info = document.getElementById("info");
+  info.style.display = "flex";
+});
+
+field.addEventListener("click", () => {
+  info.style.display = "none";
+});
