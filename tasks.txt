@@ -10,15 +10,14 @@
 - Stiftdicke nach der Auswahl in Canvas anpassen
 
 ###### color tool ######
-- Problem: wenn man die Farbe ändert und danach kein Tool auswählt, wird die Farbe nicht upgedated (erst wenn man ein neues Tool auswählt)
-- Problem: wenn zuerst den Stift auswählt und dann die Farbe ändert, wird die Farbe nicht geändert. 
+
 
 ###### text tool ######
-- funktioniert nicht mehr ???
+
 
 ###### select tool ######
 - Problem: Linienfarbe auf dem ctx ist zu hell (z.B. grau statt schwarz, wird wohl von irgendetwas überlagert)
-- Problem: Wenn man nichts zeichnet und dann doch ein anderes Tool auswählt, ist der eventListener noch aktiv und zeichnet die Form trotzdem --> siehe GENERAL
+
 
 ###### zoom-in / zoom-out (with overflow) ######
 - Problem: Gezoomte Zeichnungen werden schnell sehr verpixelt

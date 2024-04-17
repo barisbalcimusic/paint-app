@@ -28,9 +28,9 @@ let shapesToggle = false;
 const colorPalette = main.querySelector(".color-palette");
 colorPalette.addEventListener("change", (e) => {
   currentColor = e.target.value;
+  switchTool();
 });
 
-//BUG: wenn man zuerst den Stift auswählt, lässt dich die Farbe nicht mehr ändern
 //----------- TOOL SELECTING -----------
 sidebar.firstElementChild.addEventListener("click", (e) => {
   if (e.target !== e.currentTarget) {
@@ -38,67 +38,69 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
       el.style.color = "unset";
     });
     e.target.style.color = "lightblue";
-
-    selectedTool = e.target.id;
-    switch (selectedTool) {
-      case "pen":
-        field.style.cursor = "crosshair";
-        unselectShape();
-        unselectZoom();
-        field.removeEventListener("click", createTextField);
-        field.addEventListener("mousedown", drawingStart);
-        break;
-      case "eraser":
-        field.style.cursor = `url("./img/eraser.png"), auto`;
-        unselectShape();
-        unselectZoom();
-        field.removeEventListener("click", createTextField);
-        field.addEventListener("mousedown", drawingStart);
-        break;
-      case "select":
-        break;
-      case "shapes":
-        field.style.cursor = "auto";
-        unselectZoom();
-        field.removeEventListener("click", createTextField);
-        field.removeEventListener("mousedown", drawingStart);
-        if (!shapesToggle) {
-          shapesToggle = true;
-          selectShape();
-        } else {
-          unselectShape();
-        }
-        break;
-      case "text":
-        field.style.cursor = "text";
-        unselectShape();
-        unselectZoom();
-        field.removeEventListener("mousedown", drawingStart);
-        field.addEventListener("click", createTextField);
-        break;
-      case "zoom-in":
-        field.style.cursor = "zoom-in";
-        unselectShape();
-        unselectZoom();
-        field.removeEventListener("mousedown", drawingStart);
-        field.removeEventListener("click", createTextField);
-        field.addEventListener("click", zoomIn);
-        break;
-      case "zoom-out":
-        field.style.cursor = "zoom-out";
-        unselectShape();
-        unselectZoom();
-        field.removeEventListener("mousedown", drawingStart);
-        field.removeEventListener("click", createTextField);
-        field.addEventListener("click", zoomOut);
-        break;
-      case "highlighter":
-        break;
-      default:
-        break;
+    if (e.target.id !== "") {
+      selectedTool = e.target.id;
     }
+    removeAllEventListeners();
+    console.log(selectedTool);
+    switchTool();
   }
 });
+
+function switchTool() {
+  switch (selectedTool) {
+    case "pen":
+      field.style.cursor = "crosshair";
+      field.addEventListener("mousedown", drawingStart);
+      break;
+    case "eraser":
+      field.style.cursor = `url("./img/eraser.png"), auto`;
+      field.addEventListener("mousedown", drawingStart);
+      break;
+    case "select":
+      break;
+    case "shapes":
+      field.style.cursor = "auto";
+      if (!shapesToggle) {
+        shapesToggle = true;
+        selectShape();
+      } else {
+        unselectShape();
+      }
+      break;
+    case "text":
+      field.style.cursor = "text";
+      field.addEventListener("click", createTextField);
+      break;
+    case "zoom-in":
+      field.style.cursor = "zoom-in";
+      field.addEventListener("click", zoomIn);
+      break;
+    case "zoom-out":
+      field.style.cursor = "zoom-out";
+      field.addEventListener("click", zoomOut);
+      break;
+    case "highlighter":
+      break;
+    default:
+      break;
+  }
+}
+
+//remove all event listeners
+function removeAllEventListeners() {
+  unselectShape();
+  unselectZoom();
+  field.removeEventListener("click", createTextField);
+  field.removeEventListener("mousedown", drawingStart);
+  if (
+    !["shapes", "rectLabel", "rectangle", "circLabel", "circle"].includes(
+      selectedTool
+    )
+  ) {
+    field.removeEventListener("mousedown", startShape);
+  }
+}
 
 //start drawing with pen/eraser
 function drawingStart(e) {
@@ -113,7 +115,7 @@ function drawingStart(e) {
       ctx.lineWidth = 1;
       break;
     case "eraser":
-      ctx.strokeStyle = "#fff";
+      ctx.strokeStyle = "white";
       ctx.lineWidth = 30;
       break;
     case "text":
@@ -143,7 +145,6 @@ function createTextField(e) {
   const x = e.clientX;
   const y = e.clientY;
   const textField = document.createElement("textarea");
-  textField.type = "text";
   textField.setAttribute("class", "text-field");
   main.append(textField);
   textField.focus();
@@ -172,7 +173,13 @@ function convertToCanvasText(fSize, tColor, fFamily, x, y, textField) {
 }
 
 //----------- SHAPE SELECTION -----------
-//unselecting shapes
+
+//prepare shapes
+let startX, startY;
+let width, height;
+let shape, currentShape;
+
+//unselect shapes
 function unselectShape() {
   shapesToggle = false;
   main.querySelector("#shapes").style.color = "unset";
@@ -182,76 +189,75 @@ function unselectShape() {
   });
 }
 
-//selecting a shape
+//select shape
 function selectShape() {
   main.querySelectorAll(".shapeLabel").forEach((label) => {
     label.style.display = "block";
     label.addEventListener("click", (e) => {
       unselectShape();
-      drawShape(e.target.getAttribute("for"));
+      currentShape = e.target.getAttribute("for");
+      field.style.cursor = "crosshair";
+      field.addEventListener("mousedown", startShape);
     });
   });
 }
 
-//drawing a shape (rectangle or ellipse)
-function drawShape(chosenShape) {
-  field.style.cursor = "crosshair";
-  let startX, startY;
-  let width, height;
-  let shape;
-  field.addEventListener("mousedown", startShape);
-
-  //start drawing a shape
-  function startShape(e) {
-    startX = e.clientX;
-    startY = e.clientY;
-    shape = document.createElement("div");
-    shape.style.position = "absolute";
-    shape.style.border = `1px solid ${currentColor}`;
-    shape.style.left = startX + "px";
-    shape.style.top = startY + "px";
-    main.appendChild(shape);
-    if (chosenShape !== "rectangle") {
-      shape.style.borderRadius = "50%";
-    }
-
-    field.addEventListener("mousemove", moveShape);
-    field.addEventListener("mouseup", endShape);
+//start drawing shape
+function startShape(e) {
+  startX = e.clientX;
+  startY = e.clientY;
+  shape = document.createElement("div");
+  shape.style.position = "absolute";
+  shape.style.border = `1px solid ${currentColor}`;
+  shape.style.left = startX + "px";
+  shape.style.top = startY + "px";
+  main.appendChild(shape);
+  if (currentShape !== "rectangle") {
+    shape.style.borderRadius = "50%";
   }
+  if (e.buttons !== 1) return;
+  field.addEventListener("mousemove", moveShape);
+  field.addEventListener("mouseup", endShape);
+}
 
-  //perform drawing with shape
-  function moveShape(e) {
-    width = e.clientX - startX;
-    height = e.clientY - startY;
-    shape.style.width = width + "px";
-    shape.style.height = height + "px";
+//perform drawing shape
+function moveShape(e) {
+  if (e.buttons !== 1) {
+    endShape();
+    return;
   }
+  width = e.clientX - startX;
+  height = e.clientY - startY;
+  shape.style.width = Math.abs(width) + "px";
+  shape.style.height = Math.abs(height) + "px";
+  shape.style.left = (width > 0 ? startX : e.clientX) + "px";
+  shape.style.top = (height > 0 ? startY : e.clientY) + "px";
+}
 
-  //stop drawing a shape
-  function endShape() {
-    field.removeEventListener("mousedown", startShape);
-    field.removeEventListener("mousemove", moveShape);
-    field.removeEventListener("mouseup", endShape);
-    field.style.cursor = "default";
-    shape.remove();
-    let centerX = startX + width / 2;
-    let centerY = startY + height / 2;
-    ctx.beginPath();
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = 0.5;
-    chosenShape === "rectangle"
-      ? ctx.rect(startX, startY, width, height)
-      : ctx.ellipse(
-          centerX,
-          centerY,
-          Math.abs(width) / 2,
-          Math.abs(height) / 2,
-          0,
-          0,
-          2 * Math.PI
-        );
-    ctx.stroke();
-  }
+//stop drawing shape
+function endShape() {
+  field.removeEventListener("mousedown", startShape);
+  field.removeEventListener("mousemove", moveShape);
+  field.removeEventListener("mouseup", endShape);
+  field.style.cursor = "default";
+  shape.remove();
+  let centerX = startX + width / 2;
+  let centerY = startY + height / 2;
+  ctx.beginPath();
+  ctx.strokeStyle = currentColor;
+  ctx.lineWidth = 0.5;
+  currentShape === "rectangle"
+    ? ctx.rect(startX, startY, width, height)
+    : ctx.ellipse(
+        centerX,
+        centerY,
+        Math.abs(width) / 2,
+        Math.abs(height) / 2,
+        0,
+        0,
+        2 * Math.PI
+      );
+  ctx.stroke();
 }
 
 //----------- ZOOM -----------
