@@ -13,14 +13,24 @@ ctx.fillStyle = "white";
 ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
 //resize
+let imageData;
+function saveCanvas() {
+  imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+function restoreCanvas() {
+  if (imageData) {
+    ctx.putImageData(imageData, 0, 0);
+  }
+}
 window.addEventListener("resize", () => {
+  saveCanvas();
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  restoreCanvas();
 });
 
 //some initial status
 let selectedTool;
-let previousTool;
 let isDrawing = false;
 let currentColor = "black";
 let shapesToggle = false;
@@ -38,7 +48,7 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
     tools.forEach((el) => {
       el.style.color = "unset";
     });
-    e.target.style.color = "yellow";
+    e.target.style.color = "green";
     if (e.target.id !== "") {
       selectedTool = e.target.id;
     }
@@ -48,8 +58,6 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
 });
 
 function switchTool() {
-  previousTool = selectedTool;
-
   switch (selectedTool) {
     case "pen":
       field.style.cursor = "crosshair";
@@ -185,7 +193,6 @@ function unselectShape() {
   main.querySelector("#shapes").style.color = "unset";
   main.querySelectorAll(".shapeLabel").forEach((label) => {
     label.style.display = "none";
-    label.style.color = "black";
   });
 }
 
@@ -193,6 +200,7 @@ function unselectShape() {
 function selectShape() {
   main.querySelectorAll(".shapeLabel").forEach((label) => {
     label.style.display = "block";
+    // label.style.color = "red";
     label.addEventListener("click", (e) => {
       unselectShape();
       currentShape = e.target.getAttribute("for");

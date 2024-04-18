@@ -111,12 +111,6 @@ body .container .main .sidebar .tools .tool input[name=shape] {
   position: absolute;
   display: none;
 }
-body .container .main .sidebar .tools .tool:hover {
-  color: rgb(255, 255, 255);
-}
-body .container .main .sidebar .tools .tool:active {
-  color: rgb(59, 110, 23);
-}
 body .container .main .sidebar .tools #shapes {
   position: relative;
 }
@@ -124,7 +118,6 @@ body .container .main .sidebar .tools #shapes label {
   position: absolute;
   left: 60px;
   display: none;
-  color: black;
   padding: 3px;
   cursor: pointer;
 }

@@ -107,19 +107,12 @@ body {
               display: none;
             }
           }
-          .tool:hover {
-            color: rgb(255, 255, 255);
-          }
-          .tool:active {
-            color: $primary;
-          }
           #shapes {
             position: relative;
             label {
               position: absolute;
               left: 60px;
               display: none;
-              color: black;
               padding: 3px;
               cursor: pointer;
             }
