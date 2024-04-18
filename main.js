@@ -20,6 +20,7 @@ window.addEventListener("resize", () => {
 
 //some initial status
 let selectedTool;
+let previousTool;
 let isDrawing = false;
 let currentColor = "black";
 let shapesToggle = false;
@@ -37,17 +38,18 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
     tools.forEach((el) => {
       el.style.color = "unset";
     });
-    e.target.style.color = "lightblue";
+    e.target.style.color = "yellow";
     if (e.target.id !== "") {
       selectedTool = e.target.id;
     }
     removeAllEventListeners();
-    console.log(selectedTool);
     switchTool();
   }
 });
 
 function switchTool() {
+  previousTool = selectedTool;
+
   switch (selectedTool) {
     case "pen":
       field.style.cursor = "crosshair";
@@ -147,7 +149,7 @@ function createTextField(e) {
   main.append(textField);
   textField.focus();
   //initial values
-  const tColor = "black";
+  const tColor = `${currentColor}`;
   const fSize = "20";
   const fFamily = "Arial";
   textField.style.cssText = `
