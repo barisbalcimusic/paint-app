@@ -22,11 +22,35 @@ function restoreCanvas() {
     ctx.putImageData(imageData, 0, 0);
   }
 }
+// Görünür alan boyutlarını al
+const clientWidth = document.documentElement.clientWidth;
+const clientHeight = document.documentElement.clientHeight;
+
+// Ekranın tam boyutunu (piksel cinsinden) almak için (tarayıcıdan bağımsız değil):
+const screenWidth = window.screen.width;
+const screenHeight = window.screen.height;
+
+// Ekranın piksel yoğunluğunu almak için:
+const pixelDensity = window.devicePixelRatio;
+
+// Ekranın gerçek boyutunu piksel cinsinden hesaplamak için:
+const actualScreenWidth = screenWidth * pixelDensity;
+const actualScreenHeight = screenHeight * pixelDensity;
+
+// Örnek kullanım:
+console.log("Görünür alan genişliği:", clientWidth);
+console.log("Görünür alan yüksekliği:", clientHeight);
+console.log("Ekran genişliği (piksel):", screenWidth);
+console.log("Ekran yüksekliği (piksel):", screenHeight);
+console.log("Ekran piksel yoğunluğu:", pixelDensity);
+console.log("Ekranın gerçek genişliği (piksel):", actualScreenWidth);
+console.log("Ekranın gerçek yüksekliği (piksel):", actualScreenHeight);
+
 window.addEventListener("resize", () => {
   saveCanvas();
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width;
-  canvas.height = rect.height;
+  canvas.width = screen.width;
+  canvas.height = screen.height;
+
   restoreCanvas();
 });
 
@@ -117,7 +141,7 @@ function drawingStart(e) {
   field.addEventListener("mousemove", drawingProcess);
   field.addEventListener("mouseup", drawingStop);
   ctx.beginPath();
-  ctx.moveTo(e.clientX, e.clientY);
+  ctx.moveTo(e.clientX + window.scrollX, e.clientY + window.scrollY);
   switch (selectedTool) {
     case "pen":
       ctx.strokeStyle = currentColor;
@@ -137,7 +161,8 @@ function drawingStart(e) {
 //perform drawing with pen/eraser
 function drawingProcess(e) {
   if (isDrawing) {
-    ctx.lineTo(e.clientX, e.clientY);
+    ctx.lineTo(e.clientX + window.scrollX, e.clientY + window.scrollY);
+
     ctx.stroke();
   }
 }
