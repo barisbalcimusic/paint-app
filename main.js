@@ -232,6 +232,7 @@ function moveShape(e) {
   shape.style.height = Math.abs(height) + "px";
   shape.style.left = (width > 0 ? startX : e.clientX) + "px";
   shape.style.top = (height > 0 ? startY : e.clientY) + "px";
+  shape.style.borderColor = `${currentColor}`;
 }
 
 //stop drawing shape
