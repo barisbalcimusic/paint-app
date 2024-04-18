@@ -57,8 +57,6 @@ function switchTool() {
       field.style.cursor = `url("./img/eraser.png"), auto`;
       field.addEventListener("mousedown", drawingStart);
       break;
-    case "select":
-      break;
     case "shapes":
       field.style.cursor = "auto";
       if (!shapesToggle) {
