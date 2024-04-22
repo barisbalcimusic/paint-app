@@ -255,7 +255,7 @@ function endShape() {
   let centerY = startY + height / 2;
   ctx.beginPath();
   ctx.strokeStyle = currentColor;
-  ctx.lineWidth = 0.5;
+  ctx.lineWidth = 2;
   currentShape === "rectangle"
     ? ctx.rect(startX, startY, width, height)
     : ctx.ellipse(
