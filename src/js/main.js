@@ -29,31 +29,28 @@ let shapesToggle = false;
 
 //----------- TOOL SELECTING -----------
 sidebar.firstElementChild.addEventListener("click", (e) => {
-  if (e.target !== e.currentTarget) {
-    tools.forEach((el) => {
-      el.style.color = "unset";
-    });
-    e.target.style.color = "green";
-    if (e.target.id !== "") {
-      selectedTool = e.target.id;
-    }
-    removeAllEventListeners();
-    switchTool();
-  }
+  tools.forEach((tool) => tool.classList.remove("active-tool"));
+  e.target.classList.add("active-tool");
+  selectedTool = e.target.id;
+  removeAllEventListeners();
+  switchTool();
 });
 
+const changeCursor = (cursorName) => (field.style.cursor = cursorName);
+
 function switchTool() {
+  console.log(selectedTool);
   switch (selectedTool) {
     case "pen":
-      field.style.cursor = "crosshair";
+      changeCursor("crosshair");
       field.addEventListener("mousedown", drawingStart);
       break;
     case "eraser":
-      field.style.cursor = `url("./images/eraser.png"), auto`;
+      changeCursor(`url("./images/eraser.png"), auto`);
       field.addEventListener("mousedown", drawingStart);
       break;
     case "shapes":
-      field.style.cursor = "auto";
+      changeCursor("auto");
       if (!shapesToggle) {
         shapesToggle = true;
         selectShape();
@@ -62,20 +59,16 @@ function switchTool() {
       }
       break;
     case "text":
-      field.style.cursor = "text";
+      changeCursor("text");
       field.addEventListener("click", createTextField);
       break;
     case "zoom-in":
-      field.style.cursor = "zoom-in";
+      changeCursor("zoom-in");
       field.addEventListener("click", zoomIn);
       break;
     case "zoom-out":
-      field.style.cursor = "zoom-out";
+      changeCursor("zoom-out");
       field.addEventListener("click", zoomOut);
-      break;
-    case "highlighter":
-      break;
-    default:
       break;
   }
 }
@@ -117,10 +110,6 @@ function drawingStart(e) {
     case "eraser":
       ctx.strokeStyle = "white";
       ctx.lineWidth = 30;
-      break;
-    case "text":
-      break;
-    default:
       break;
   }
 }

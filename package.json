@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "sass": "sass --watch style.scss:style.css"
+    "sass": "sass --watch ./src/style/style.scss:./src/style/style.css"
   },
   "keywords": [],
   "author": "",
