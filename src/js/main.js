@@ -13,9 +13,8 @@ ctx.fillStyle = "white";
 ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
 //resize canvas
-let imageData;
 window.addEventListener("resize", () => {
-  imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   canvas.width = screen.width;
   canvas.height = screen.height;
   ctx.putImageData(imageData, 0, 0);
@@ -28,18 +27,29 @@ let currentColor = "black";
 let shapesToggle = false;
 
 //----------- TOOL SELECTING -----------
+
+//highlighting active tool
 sidebar.firstElementChild.addEventListener("click", (e) => {
   tools.forEach((tool) => tool.classList.remove("active-tool"));
   e.target.classList.add("active-tool");
-  selectedTool = e.target.id;
+  if (e.target.id !== "color") selectedTool = e.target.id;
   removeAllEventListeners();
-  switchTool();
+  selectTool();
 });
 
-const changeCursor = (cursorName) => (field.style.cursor = cursorName);
+//selecting cursor
+let lastCursor;
+const changeCursor = (cursorName) => {
+  field.style.cursor = cursorName;
+  lastCursor = cursorName;
+};
 
-function switchTool() {
-  console.log(selectedTool);
+//tool selection
+function selectTool() {
+  if (shapesToggle) {
+    shapesToggle = false;
+    shapesPopUp.style.display = "none";
+  }
   switch (selectedTool) {
     case "pen":
       changeCursor("crosshair");
@@ -51,12 +61,7 @@ function switchTool() {
       break;
     case "shapes":
       changeCursor("auto");
-      if (!shapesToggle) {
-        shapesToggle = true;
-        selectShape();
-      } else {
-        unselectShape();
-      }
+      selectShape();
       break;
     case "text":
       changeCursor("text");
@@ -70,19 +75,22 @@ function switchTool() {
       changeCursor("zoom-out");
       field.addEventListener("click", zoomOut);
       break;
+    default:
+      changeCursor("lastCursor");
+      break;
   }
 }
 
-//----------- COLOR CHANGE -----------
+//changing color
 const colorPalette = main.querySelector(".color-palette");
 colorPalette.addEventListener("change", (e) => {
   currentColor = e.target.value;
-  switchTool();
+  selectTool();
 });
 
 //remove all event listeners
 function removeAllEventListeners() {
-  unselectShape();
+  // unselectShape();
   unselectZoom();
   field.removeEventListener("click", createTextField);
   field.removeEventListener("mousedown", drawingStart);
@@ -129,6 +137,7 @@ function drawingStop() {
 }
 
 //----------- ADDING TEXT -----------
+
 //create textarea as preview
 function createTextField(e) {
   const x = e.clientX;
@@ -137,7 +146,6 @@ function createTextField(e) {
   textField.setAttribute("class", "text-field");
   main.append(textField);
   textField.focus();
-  //initial values
   const tColor = `${currentColor}`;
   const fSize = "20";
   const fFamily = "Arial";
@@ -168,27 +176,22 @@ let startX, startY;
 let width, height;
 let shape, currentShape;
 
-//unselect shapes
-function unselectShape() {
-  shapesToggle = false;
-  main.querySelector("#shapes").style.color = "unset";
-  main.querySelectorAll(".shapeLabel").forEach((label) => {
-    label.style.display = "none";
-  });
-}
-
-//select shape
+//select shape //? click event should be removed after usage
+const shapesPopUp = main.querySelector(".shapes-pop-up");
 function selectShape() {
-  main.querySelectorAll(".shapeLabel").forEach((label) => {
-    label.style.display = "block";
-    // label.style.color = "red";
-    label.addEventListener("click", (e) => {
-      unselectShape();
-      currentShape = e.target.getAttribute("for");
-      field.style.cursor = "crosshair";
+  shapesToggle = !shapesToggle;
+  if (shapesToggle) {
+    shapesPopUp.style.display = "flex";
+    shapesPopUp.addEventListener("click", (e) => {
+      shapesPopUp.style.display = "none";
       field.addEventListener("mousedown", startShape);
+      currentShape = e.target.id;
+      changeCursor("crosshair");
+      shapesToggle = false;
     });
-  });
+  } else {
+    shapesPopUp.style.display = "none";
+  }
 }
 
 //start drawing shape
@@ -197,7 +200,7 @@ function startShape(e) {
   startY = e.clientY;
   shape = document.createElement("div");
   shape.style.position = "absolute";
-  shape.style.border = `1px solid ${currentColor}`;
+  shape.style.border = `2px solid ${currentColor}`;
   shape.style.left = startX + "px";
   shape.style.top = startY + "px";
   main.appendChild(shape);
@@ -229,13 +232,13 @@ function endShape() {
   field.removeEventListener("mousedown", startShape);
   field.removeEventListener("mousemove", moveShape);
   field.removeEventListener("mouseup", endShape);
-  field.style.cursor = "default";
+  changeCursor("default");
   shape.remove();
   let centerX = startX + width / 2;
   let centerY = startY + height / 2;
   ctx.beginPath();
   ctx.strokeStyle = currentColor;
-  ctx.lineWidth = 0.5;
+  ctx.lineWidth = 2;
   currentShape === "rectangle"
     ? ctx.rect(startX, startY, width, height)
     : ctx.ellipse(
@@ -251,6 +254,7 @@ function endShape() {
 }
 
 //----------- ZOOM -----------
+
 //Unselect Zoom
 const unselectZoom = () => {
   field.removeEventListener("click", zoomIn);
@@ -288,6 +292,7 @@ const zoom = (e, zoomFactor) => {
 };
 
 //----------- MENUBAR -----------
+
 //save
 const saveBtn = document.getElementById("save");
 saveBtn.addEventListener("click", () => {

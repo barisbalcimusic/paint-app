@@ -96,6 +96,7 @@ body {
             height: 100%;
             padding: 15px 0px;
             font-size: 30px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -104,10 +105,9 @@ body {
               background-color: rgba(56, 56, 56, 0.363);
             }
             .color-palette {
+              width: 100%;
+              height: 100%;
               position: absolute;
-              width: 40px;
-              height: 40px;
-              border-radius: 50%;
               opacity: 0;
               cursor: pointer;
             }
@@ -118,15 +118,22 @@ body {
           }
           #shapes {
             position: relative;
-            label {
+            .shapes-pop-up {
               position: absolute;
               left: 60px;
               display: none;
-              padding: 3px;
-              cursor: pointer;
             }
-            #circLabel {
-              left: 100px;
+            .shape {
+              left: 60px;
+              color: black;
+              display: block;
+              padding: 15px;
+              font-size: 30px;
+              background-color: $secondary;
+              cursor: pointer;
+              &:hover {
+                background-color: rgb(255, 188, 188);
+              }
             }
           }
         }
