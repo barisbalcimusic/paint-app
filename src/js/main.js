@@ -33,7 +33,7 @@ sidebar.firstElementChild.addEventListener("click", (e) => {
   tools.forEach((tool) => tool.classList.remove("active-tool"));
   e.target.classList.add("active-tool");
   if (e.target.id !== "color") selectedTool = e.target.id;
-  removeAllEventListeners();
+  cleanUp();
   selectTool();
 });
 
@@ -46,10 +46,6 @@ const changeCursor = (cursorName) => {
 
 //tool selection
 function selectTool() {
-  if (shapesToggle) {
-    shapesToggle = false;
-    shapesPopUp.style.display = "none";
-  }
   switch (selectedTool) {
     case "pen":
       changeCursor("crosshair");
@@ -88,12 +84,15 @@ colorPalette.addEventListener("change", (e) => {
   selectTool();
 });
 
-//remove all event listeners
-function removeAllEventListeners() {
-  // unselectShape();
-  unselectZoom();
+//clean up eventListeners and shapesPopUp
+function cleanUp() {
+  field.removeEventListener("click", zoomIn);
+  field.removeEventListener("click", zoomOut);
   field.removeEventListener("click", createTextField);
   field.removeEventListener("mousedown", drawingStart);
+  shapesToggle = false;
+  shapesPopUp.style.display = "none";
+  shapesPopUp.removeEventListener("click", prepareShape);
   if (
     !["shapes", "rectLabel", "rectangle", "circLabel", "circle"].includes(
       selectedTool
@@ -110,16 +109,9 @@ function drawingStart(e) {
   field.addEventListener("mouseup", drawingStop);
   ctx.beginPath();
   ctx.moveTo(e.clientX + window.scrollX, e.clientY + window.scrollY);
-  switch (selectedTool) {
-    case "pen":
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = 1;
-      break;
-    case "eraser":
-      ctx.strokeStyle = "white";
-      ctx.lineWidth = 30;
-      break;
-  }
+  selectedTool === "pen"
+    ? ((ctx.strokeStyle = currentColor), (ctx.lineWidth = 1))
+    : ((ctx.strokeStyle = "white"), (ctx.lineWidth = 30));
 }
 
 //perform drawing with pen/eraser
@@ -140,17 +132,15 @@ function drawingStop() {
 
 //create textarea as preview
 function createTextField(e) {
-  const x = e.clientX;
-  const y = e.clientY;
+  const { clientX: x, clientY: y } = e;
   const textField = document.createElement("textarea");
-  textField.setAttribute("class", "text-field");
+  textField.className = "text-field";
   main.append(textField);
   textField.focus();
   const tColor = `${currentColor}`;
   const fSize = "20";
   const fFamily = "Arial";
   textField.style.cssText = `
-    position: absolute;
     top: ${y}px;
     left: ${x}px;
     color:${tColor};
@@ -172,26 +162,25 @@ function convertToCanvasText(fSize, tColor, fFamily, x, y, textField) {
 //----------- SHAPE SELECTION -----------
 
 //prepare shapes
-let startX, startY;
-let width, height;
-let shape, currentShape;
+let startX, startY, width, height, shape, currentShape;
 
-//select shape //? click event should be removed after usage
+//select shape
 const shapesPopUp = main.querySelector(".shapes-pop-up");
 function selectShape() {
   shapesToggle = !shapesToggle;
   if (shapesToggle) {
     shapesPopUp.style.display = "flex";
-    shapesPopUp.addEventListener("click", (e) => {
-      shapesPopUp.style.display = "none";
-      field.addEventListener("mousedown", startShape);
-      currentShape = e.target.id;
-      changeCursor("crosshair");
-      shapesToggle = false;
-    });
-  } else {
-    shapesPopUp.style.display = "none";
+    shapesPopUp.addEventListener("click", prepareShape);
   }
+}
+
+// prepare shape
+function prepareShape(e) {
+  shapesPopUp.style.display = "none";
+  currentShape = e.target.id;
+  changeCursor("crosshair");
+  shapesToggle = false;
+  field.addEventListener("mousedown", startShape);
 }
 
 //start drawing shape
@@ -199,15 +188,12 @@ function startShape(e) {
   startX = e.clientX;
   startY = e.clientY;
   shape = document.createElement("div");
-  shape.style.position = "absolute";
-  shape.style.border = `2px solid ${currentColor}`;
-  shape.style.left = startX + "px";
-  shape.style.top = startY + "px";
+  shape.style.cssText = `position: absolute; 
+  border: 2px solid ${currentColor}; 
+  left: ${startX}px; 
+  top: ${startY}px; 
+  ${currentShape !== "rectangle" ? "border-radius: 50%;" : null}`;
   main.appendChild(shape);
-  if (currentShape !== "rectangle") {
-    shape.style.borderRadius = "50%";
-  }
-  if (e.buttons !== 1) return;
   field.addEventListener("mousemove", moveShape);
   field.addEventListener("mouseup", endShape);
 }
@@ -234,58 +220,46 @@ function endShape() {
   field.removeEventListener("mouseup", endShape);
   changeCursor("default");
   shape.remove();
-  let centerX = startX + width / 2;
-  let centerY = startY + height / 2;
   ctx.beginPath();
-  ctx.strokeStyle = currentColor;
-  ctx.lineWidth = 2;
   currentShape === "rectangle"
     ? ctx.rect(startX, startY, width, height)
     : ctx.ellipse(
-        centerX,
-        centerY,
+        startX + width / 2,
+        startY + height / 2,
         Math.abs(width) / 2,
         Math.abs(height) / 2,
         0,
         0,
         2 * Math.PI
       );
+  ctx.strokeStyle = currentColor;
+  ctx.lineWidth = 2;
   ctx.stroke();
 }
 
 //----------- ZOOM -----------
 
-//Unselect Zoom
-const unselectZoom = () => {
-  field.removeEventListener("click", zoomIn);
-  field.removeEventListener("click", zoomOut);
-};
-
 //Declare functions for Zooming in/out
-const zoomIn = (e) => {
-  zoom(e, 1.1);
-};
-const zoomOut = (e) => {
-  zoom(e, 0.9);
-};
+const zoomIn = (e) => zoom(e, 1.1);
+const zoomOut = (e) => zoom(e, 0.9);
 
 //Zooming in/out
-const zoom = (e, zoomFactor) => {
+const zoom = (e, factor) => {
   const x = e.offsetX;
   const y = e.offsetY;
-  //Draw current canvas to a second canvas "resizedCanvas"
+  //Draw current canvas onto a second canvas "resizedCanvas"
+  const newWidth = canvas.width * factor;
+  const newHeight = canvas.height * factor;
   const resizedCanvas = document.createElement("canvas");
-  const resizedCtx = resizedCanvas.getContext("2d");
-  const newWidth = canvas.width * zoomFactor;
-  const newHeight = canvas.height * zoomFactor;
   resizedCanvas.width = newWidth;
   resizedCanvas.height = newHeight;
+  const resizedCtx = resizedCanvas.getContext("2d");
   resizedCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
-  //Clear current canvas, save settings, move according to mouseclick-location
+  //Clear current canvas, save settings, move according to mouse-location
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
-  ctx.translate(-x * (zoomFactor - 1), -y * (zoomFactor - 1));
-  ctx.scale(zoomFactor, zoomFactor);
+  ctx.translate(-x * (factor - 1), -y * (factor - 1));
+  ctx.scale(factor, factor);
   //Draw "resizedCanvas" onto current canvas, restore settings
   ctx.drawImage(resizedCanvas, 0, 0);
   ctx.restore();

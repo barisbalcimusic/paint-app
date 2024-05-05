@@ -141,6 +141,7 @@ body .container .main .sidebar .tools #shapes .shape:hover {
   background-color: rgb(255, 188, 188);
 }
 body .container .main .text-field {
+  position: absolute;
   border: none;
   overflow: hidden;
   background-color: transparent;
