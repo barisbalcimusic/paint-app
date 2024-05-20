@@ -1,7 +1,3 @@
-Verstanden, hier ist die aktualisierte Beschreibung mit dem Link zur Anwendung am Anfang:
-
----
-
 # H&B Paint
 
 [**H&B Paint Application**](https://barisbalcimusic.github.io/paint/)
@@ -36,7 +32,3 @@ Contributions to this project are currently not possible.
 ## Contact
 
 The project was developed in collaboration with Hanah Rein. You can find Hanah on GitHub at [@hannahnier](https://github.com/hannahnier).
-
----
-
-This version includes the application link at the top for easy access.
