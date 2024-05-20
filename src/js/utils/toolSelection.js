@@ -34,7 +34,7 @@ export const selectTool = () => {
       field.addEventListener("mousedown", drawingStart);
       break;
     case "eraser":
-      changeCursor(`url("./images/eraser.png"), auto`);
+      changeCursor(`url("./src/images/eraser.png"), auto`);
       field.addEventListener("mousedown", drawingStart);
       break;
     case "shapes":
