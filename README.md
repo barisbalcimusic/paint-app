@@ -28,3 +28,6 @@ This project was created during our 12-month full-stack training program to expl
 ## Contact
 
 The project was developed in collaboration with Hannah Rein. You can find Hannah on GitHub at [@hannahnier](https://github.com/hannahnier).
+
+## Screenshots
+![Screenshot 2024-09-11 195538](https://github.com/user-attachments/assets/abf4e076-ff5d-4f00-9261-73e883b6d86d)
